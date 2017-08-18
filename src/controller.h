@@ -26,7 +26,10 @@ private:
     void sendComponentValue(ComponentID component);
     void sendAllComponentValues();
 
+    void pressureControl();
+
     unsigned long mTimer;
+    unsigned long mPressureControlTimer;
 
     XIO mXioBoard;
     bool mXIORefreshRequested;

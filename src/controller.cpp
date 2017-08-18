@@ -68,12 +68,14 @@ Controller::Controller()
     mXioBoard.refreshIO();
 
     mTimer = millis();
+    mPressureControlTimer = millis();
 }
 
 Controller::~Controller()
 {}
 
-// called by loop()
+unsigned long pressureControlTimer;
+
 void Controller::update()
 {
     // Send current pressures every 1 second (or so)
@@ -88,26 +90,10 @@ void Controller::update()
     }
     */
 
-    // Pressure control: if the current pressure is above a certain threshold,
-    // we turn the pump off. If it is below a certain threshold (all relative to
-    // the setpoint), we turn the pump on.
-    // Pressure controllers 1 and 2 are connected to pump 1 (positive pressure);
-    // Pressure controller 3 is connected to pump 2 (vacuum).
-
-
-    // For now: just one PR connected to 1 pump.
-
-    /*
-    PressureController * pc = dynamic_cast<PressureController*>(mComponents[PR1]);
-    uint8_t setPoint = pc->setPointValue();
-    uint8_t current = pc->getValue();
-
-    if (current < PRESSURE_LOW_THRESHOLD_RATIO*setPoint) 
-        mComponents[PUMP1]->setValue(ON);
-    else if (current > PRESSURE_HIGH_THRESHOLD_RATIO*setpoint)
-        mComponents[PUMP1]->setValue(OFF);
-
-        */
+    if ((millis() - mPressureControlTimer) > 500) {
+        pressureControl();
+        mPressureControlTimer = millis();
+    }
 
     if (Serial.available())
         handleSerialData();
@@ -142,7 +128,7 @@ void Controller::handleSerialData()
 
         if (firstByte == STATUS_REQUEST) {
             Log.notice("Status request for component %d \n", secondByte);
-            if (secondByte == ALL_COMPONENTS) 
+            if (secondByte == ALL_COMPONENTS)
                 sendAllComponentValues();
             else
                 sendComponentValue(static_cast<ComponentID>(secondByte));
@@ -151,6 +137,7 @@ void Controller::handleSerialData()
         else if (firstByte >= VALVE1 && firstByte < ALL_COMPONENTS) {
             if (mComponents.count(static_cast<ComponentID>(firstByte))) {
                 mComponents[static_cast<ComponentID>(firstByte)]->setValue(secondByte);
+                sendComponentValue(static_cast<ComponentID>(firstByte));
             }
 
         }
@@ -170,4 +157,26 @@ void Controller::sendAllComponentValues()
     for (auto const& i : mComponents) {
         sendComponentValue(i.first);
     }
+}
+
+
+void Controller::pressureControl()
+{
+    // Pressure control: if the current pressure is above a certain threshold,
+    // we turn the pump off. If it is below a certain threshold (all relative to
+    // the setpoint), we turn the pump on.
+    // Pressure controllers 1 and 2 are connected to pump 1 (positive pressure);
+    // Pressure controller 3 is connected to pump 2 (vacuum).
+
+
+    // For now: just one PR connected to 1 pump.
+
+    PressureController * pc = static_cast<PressureController*>(mComponents[PR1]);
+    uint8_t setPoint = pc->setPointValue();
+    uint8_t current = pc->getValue();
+
+    if (current < PRESSURE_LOW_THRESHOLD_RATIO*setPoint)
+        mComponents[PUMP1]->setValue(ON);
+    else if (current > PRESSURE_HIGH_THRESHOLD_RATIO*setPoint)
+        mComponents[PUMP1]->setValue(OFF);
 }
