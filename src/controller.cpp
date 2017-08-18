@@ -6,7 +6,6 @@ Controller::Controller()
     Wire.begin();
     mXioBoard.begin(LOW, LOW, LOW, XIO_RESET_PIN , XIO_OE_PIN);
 
-    // Move the normally-open states to constants.h?
     mComponents[VALVE1] = new Valve(VALVE1_PIN, true);
     mComponents[VALVE2] = new Valve(VALVE2_PIN, true);
     mComponents[VALVE3] = new Valve(VALVE3_PIN, true);
@@ -76,6 +75,9 @@ Controller::~Controller()
 
 unsigned long pressureControlTimer;
 
+/**
+  * This function should be called by loop().
+  */
 void Controller::update()
 {
     // Send current pressures every 1 second (or so)
@@ -104,17 +106,38 @@ void Controller::update()
     }
 }
 
+/**
+  * Replacement of pinMode() for components connected to the PCA9896
+  */
 void Controller::xioPinMode(int pin, int mode)
 {
     mXioBoard.xioPinModeCached(pin, mode);
 }
 
+/**
+  * Replacement of digitalWrite() for components connected to the PCA9896
+  *
+  * The value is not set immediately, but on the next run of update(). This is to
+  * avoid sending too many requests via the i2c bus, which would be too slow.
+  * (see XIO library reference for more details)
+  */
 void Controller::xioDigitalWrite(int pin, int value)
 {
     mXioBoard.xioDigitalWriteCached(pin, value);
     mXIORefreshRequested = true;
 }
 
+/** 
+  * @brief Read data from the serial buffer, and execute any instructions received.
+  *
+  * Data is exchanged between the microcontroller and the PC in two-byte packets.
+  * The PC can either request the status of one or all components, or request a new
+  * setpoint for a given component.
+  * In the first case, the first byte will be STATUS_REQUEST, and the second byte 
+  * will be a component ID (see constants.h).
+  * In the second case, the first byte will be a component ID, and the second byte, the
+  * desired setpoint.
+  */
 void Controller::handleSerialData()
 {
 
@@ -136,6 +159,7 @@ void Controller::handleSerialData()
 
         else if (firstByte >= VALVE1 && firstByte < ALL_COMPONENTS) {
             if (mComponents.count(static_cast<ComponentID>(firstByte))) {
+                // Set requested value and communicate the new state
                 mComponents[static_cast<ComponentID>(firstByte)]->setValue(secondByte);
                 sendComponentValue(static_cast<ComponentID>(firstByte));
             }
@@ -144,6 +168,9 @@ void Controller::handleSerialData()
     }
 }
 
+/**
+  * @brief Write the value of the given component to serial.
+  */
 void Controller::sendComponentValue(ComponentID component)
 {
     if (mComponents.count(component)) {
@@ -152,6 +179,9 @@ void Controller::sendComponentValue(ComponentID component)
     }
 }
 
+/**
+  * @brief Write the value of all components to serial.
+  */
 void Controller::sendAllComponentValues()
 {
     for (auto const& i : mComponents) {
