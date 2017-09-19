@@ -3,6 +3,14 @@
 
 #include <XIO.h>
 
+// Testing stuff
+// ---------------------------------------
+
+// if the following line is uncommented, the neopixel-related code in controller.[h/cpp] will be compiled (switching LEDs on/off when valves are toggled)
+#define NEOPIXELS 
+#define NEOPIXELS_DATA_PIN 14
+
+
 // I/O pins
 // ---------------------------------------
 #define XIO_RESET_PIN 13

@@ -1,8 +1,41 @@
 #include "controller.h"
 
+#ifdef NEOPIXELS
+int colorSaturation = 32;
+int pixelCount = 32;
+
+RgbColor red(colorSaturation, 0, 0);
+RgbColor green(0, colorSaturation, 0);
+RgbColor blue(0, 0, colorSaturation);
+RgbColor white(colorSaturation/3);
+RgbColor black(0);
+
+NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> mStrip(pixelCount, NEOPIXELS_DATA_PIN);
+
+void Controller::initNeoPixelStrip()
+{
+    mStrip.Begin();
+    mStrip.Show();
+
+    for (size_t i = 0; i < pixelCount; i++) {
+      mStrip.SetPixelColor(i, red);
+    }
+    mStrip.Show();
+}   
+
+void Controller::setNeoPixel(int index, const RgbColor& color)
+{
+    mStrip.SetPixelColor(index, color);
+    mStrip.Show();
+}
+
+#endif
+
+
 Controller::Controller()
     : mXIORefreshRequested(false)
 {
+    Serial.println("hello");
     Wire.begin();
     mXioBoard.begin(LOW, LOW, LOW, XIO_RESET_PIN , XIO_OE_PIN);
 
@@ -68,6 +101,10 @@ Controller::Controller()
 
     mTimer = millis();
     mPressureControlTimer = millis();
+
+#ifdef NEOPIXELS
+//    initNeopixelStrip();
+#endif
 }
 
 Controller::~Controller()
@@ -162,6 +199,10 @@ void Controller::handleSerialData()
                 // Set requested value and communicate the new state
                 mComponents[static_cast<ComponentID>(firstByte)]->setValue(secondByte);
                 sendComponentValue(static_cast<ComponentID>(firstByte));
+
+#ifdef NEOPIXELS
+                setNeoPixel(firstByte - VALVE1, (secondByte == OPEN ? green : red));
+#endif
             }
 
         }
@@ -210,3 +251,5 @@ void Controller::pressureControl()
     else if (current > PRESSURE_HIGH_THRESHOLD_RATIO*setPoint)
         mComponents[PUMP1]->setValue(OFF);
 }
+
+

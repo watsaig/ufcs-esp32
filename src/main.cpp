@@ -18,6 +18,10 @@ void setup()
 
     // Wait for serial to attach
     while (!Serial);
+
+    #ifdef NEOPIXELS
+    controller.initNeoPixelStrip();
+    #endif
 }
 
 void loop()
