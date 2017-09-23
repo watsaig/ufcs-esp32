@@ -44,7 +44,6 @@ void Controller::setNeoPixel(int index, const RgbColor& color)
 Controller::Controller()
     : mXIORefreshRequested(false)
 {
-    Serial.println("hello");
     Wire.begin();
     mXioBoard.begin(LOW, LOW, LOW, XIO_RESET_PIN , XIO_OE_PIN);
 
@@ -66,13 +65,14 @@ Controller::Controller()
     mComponents[VALVE15] = new Valve(VALVE15_PIN, true);
     mComponents[VALVE16] = new Valve(VALVE16_PIN, true);
 
-    mComponents[VALVE17] = new Valve(VALVE17_PIN, true);
-    mComponents[VALVE18] = new Valve(VALVE18_PIN, true);
-    mComponents[VALVE19] = new Valve(VALVE19_PIN, true);
-    mComponents[VALVE20] = new Valve(VALVE20_PIN, true);
-    mComponents[VALVE21] = new Valve(VALVE21_PIN, true);
-    mComponents[VALVE22] = new Valve(VALVE22_PIN, true);
-    mComponents[VALVE23] = new Valve(VALVE23_PIN, true);
+    mComponents[VALVE17] = new Valve(VALVE17_PIN, false);
+    mComponents[VALVE18] = new Valve(VALVE18_PIN, false);
+    mComponents[VALVE19] = new Valve(VALVE19_PIN, false);
+    mComponents[VALVE20] = new Valve(VALVE20_PIN, false);
+    mComponents[VALVE21] = new Valve(VALVE21_PIN, false);
+    mComponents[VALVE22] = new Valve(VALVE25_PIN, false);
+    mComponents[VALVE23] = new Valve(VALVE26_PIN, false);
+    /*
     mComponents[VALVE24] = new Valve(VALVE24_PIN, true);
 
     mComponents[VALVE25] = new Valve(VALVE25_PIN, true);
@@ -83,6 +83,7 @@ Controller::Controller()
     mComponents[VALVE30] = new Valve(VALVE30_PIN, true);
     mComponents[VALVE31] = new Valve(VALVE31_PIN, true);
     mComponents[VALVE32] = new Valve(VALVE32_PIN, true);
+    */
 
     mComponents[PUMP1] = new Pump(PUMP1_PIN);
     mComponents[PUMP2] = new Pump(PUMP2_PIN);
