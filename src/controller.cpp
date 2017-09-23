@@ -2,7 +2,7 @@
 
 #ifdef NEOPIXELS
 int colorSaturation = 32;
-int pixelCount = 32;
+int pixelCount = 37;
 
 RgbColor red(colorSaturation, 0, 0);
 RgbColor green(0, colorSaturation, 0);
@@ -15,17 +15,26 @@ NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> mStrip(pixelCount, NEOPIXELS_DATA_P
 void Controller::initNeoPixelStrip()
 {
     mStrip.Begin();
+    delay(1);
     mStrip.Show();
 
-    for (size_t i = 0; i < pixelCount; i++) {
-      mStrip.SetPixelColor(i, red);
+    for (size_t i = VALVE1; i < VALVE24; i++) {
+      //mStrip.SetPixelColor(i, red);
+        if (mComponents[static_cast<ComponentID>(i)]->getValue() == OPEN) 
+            mStrip.SetPixelColor(i, green);
+        else
+            mStrip.SetPixelColor(i, red);
+
+
     }
+    delay(1);
     mStrip.Show();
 }   
 
 void Controller::setNeoPixel(int index, const RgbColor& color)
 {
     mStrip.SetPixelColor(index, color);
+    delay(1);
     mStrip.Show();
 }
 
