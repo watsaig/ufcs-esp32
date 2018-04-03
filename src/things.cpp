@@ -150,7 +150,12 @@ void PressureController::setValue(uint8_t value)
 
 uint8_t PressureController::getValue()
 {
-    int val = analogRead(mMeasurementPin);
+    long val = analogRead(mMeasurementPin);
+    val += analogRead(mMeasurementPin);
+    val += analogRead(mMeasurementPin);
+    val = round(double(val)/3.0);
+
+
 
     /* The result of analogRead doesn't correspond linearly to the voltage applied;
        see: https://github.com/espressif/esp-idf/issues/164
