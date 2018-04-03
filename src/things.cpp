@@ -28,8 +28,8 @@ Valve::~Valve()
 
 void Valve::setValue(uint8_t value)
 {
-    /* 
-       setValue calls xioDigitalWrite, since all valves are connected to 
+    /*
+       setValue calls xioDigitalWrite, since all valves are connected to
        the IO expander. If this weren't the case, then it would be necessary
        to handle calling either digitalWrite or xioDigitalWrite based on the
        component's pin.
@@ -45,7 +45,7 @@ void Valve::setValue(uint8_t value)
 
         Log.notice("Switching valve %s \n", value == OPEN ? "open" : "closed");
 
-        controller.xioDigitalWrite(mPin, pinLevel); 
+        controller.xioDigitalWrite(mPin, pinLevel);
     }
 }
 
@@ -124,7 +124,7 @@ void PressureController::setValue(uint8_t value)
         /*
         int toWrite = value;
         // Rescale the value if necessary
-        if (mSetPointMaxValue != UINT8_MAX) 
+        if (mSetPointMaxValue != UINT8_MAX)
             int toWrite = double(value)/double(UINT8_MAX) * mSetPointMaxValue;
             */
 
@@ -132,7 +132,7 @@ void PressureController::setValue(uint8_t value)
 
         if (mSetPointPin == DAC0 || mSetPointPin == DAC1) {
             double y = 0.3306*pow(x, 3) - 0.428*pow(x, 2) + 1.0961*x - 0.0258;
-            int toWrite = std::min(mSetPointMaxValue, 
+            int toWrite = std::min(mSetPointMaxValue,
                                    std::max(0, int(round(y*mSetPointMaxValue))));
 
             dacWrite(mSetPointPin, toWrite);
@@ -141,7 +141,7 @@ void PressureController::setValue(uint8_t value)
 
             double y = 0.3689*pow(x, 3) - 0.4627*pow(x, 2) + 1.0525*x - 0.004;
 
-            int toWrite = std::min(mSetPointMaxValue, 
+            int toWrite = std::min(mSetPointMaxValue,
                                    std::max(0, int(round(y*mSetPointMaxValue))));
             ledcWrite(1, toWrite);
         }

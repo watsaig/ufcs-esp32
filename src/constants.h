@@ -10,7 +10,7 @@
 // ---------------------------------------
 
 // if the following line is uncommented, the neopixel-related code in controller.[h/cpp] will be compiled (switching LEDs on/off when valves are toggled)
-#define NEOPIXELS 
+#define NEOPIXELS
 #define NEOPIXELS_DATA_PIN 14
 
 
@@ -36,8 +36,8 @@
 #define DAC_MAX_VALUE 255
 #define ADC_MAX_VALUE 4095
 #define PWM_MAX_VALUE 255 // depends on resolution (8 bit => max value of 255)
-#define PWM_RESOLUTION 8 
-#define PWM_FREQ 12000 
+#define PWM_RESOLUTION 8
+#define PWM_FREQ 12000
 
 #define VALVE1_PIN XIO_PIN_A7
 #define VALVE2_PIN XIO_PIN_A6

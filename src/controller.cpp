@@ -20,7 +20,7 @@ void Controller::initNeoPixelStrip()
 
     for (size_t i = VALVE1; i < VALVE24; i++) {
       //mStrip.SetPixelColor(i, red);
-        if (mComponents[static_cast<ComponentID>(i)]->getValue() == OPEN) 
+        if (mComponents[static_cast<ComponentID>(i)]->getValue() == OPEN)
             mStrip.SetPixelColor(i, green);
         else
             mStrip.SetPixelColor(i, red);
@@ -29,7 +29,7 @@ void Controller::initNeoPixelStrip()
     }
     delay(1);
     mStrip.Show();
-}   
+}
 
 void Controller::setNeoPixel(int index, const RgbColor& color)
 {
@@ -133,20 +133,20 @@ void Controller::update()
 {
     // Send current pressures every 1 second (or so)
 
-    /*
-    if ((millis() - mTimer) > 1000) {
+    if ((millis() - mTimer) > 500) {
         sendComponentValue(PR1);
         sendComponentValue(PR2);
         sendComponentValue(PR3);
 
         mTimer = millis();
     }
-    */
 
+    /*
     if ((millis() - mPressureControlTimer) > 500) {
         pressureControl();
         mPressureControlTimer = millis();
     }
+    */
 
 #ifdef BLUETOOTH_SERIAL
     if (SerialBT.available())
@@ -182,13 +182,13 @@ void Controller::xioDigitalWrite(int pin, int value)
     mXIORefreshRequested = true;
 }
 
-/** 
+/**
   * @brief Read data from the serial buffer, and execute any instructions received.
   *
   * Data is exchanged between the microcontroller and the PC in two-byte packets.
   * The PC can either request the status of one or all components, or request a new
   * setpoint for a given component.
-  * In the first case, the first byte will be STATUS_REQUEST, and the second byte 
+  * In the first case, the first byte will be STATUS_REQUEST, and the second byte
   * will be a component ID (see constants.h).
   * In the second case, the first byte will be a component ID, and the second byte, the
   * desired setpoint.
@@ -281,5 +281,3 @@ void Controller::pressureControl()
     else if (current > PRESSURE_HIGH_THRESHOLD_RATIO*setPoint)
         mComponents[PUMP1]->setValue(OFF);
 }
-
-
