@@ -40,6 +40,10 @@ void Controller::setNeoPixel(int index, const RgbColor& color)
 
 #endif
 
+#ifdef BLUETOOTH_SERIAL
+#include <BluetoothSerial.h>
+extern BluetoothSerial SerialBT;
+#endif
 
 Controller::Controller()
     : mXIORefreshRequested(false)
@@ -144,7 +148,11 @@ void Controller::update()
         mPressureControlTimer = millis();
     }
 
+#ifdef BLUETOOTH_SERIAL
+    if (SerialBT.available())
+#else
     if (Serial.available())
+#endif
         handleSerialData();
 
     if (mXIORefreshRequested) {
@@ -188,12 +196,20 @@ void Controller::xioDigitalWrite(int pin, int value)
 void Controller::handleSerialData()
 {
 
+#ifdef BLUETOOTH_SERIAL
+    while (SerialBT.available() >= 2) {
+        int length = SerialBT.available();
+        uint8_t firstByte, secondByte;
+        firstByte = SerialBT.read();
+        secondByte = SerialBT.read();
+#else
     while (Serial.available() >= 2) {
         int length = Serial.available();
         uint8_t firstByte, secondByte;
         firstByte = Serial.read();
         secondByte = Serial.read();
 
+#endif
         Log.notice("Received %d bytes: %d ; %d \n", length, firstByte, secondByte);
 
         if (firstByte == STATUS_REQUEST) {
@@ -225,8 +241,12 @@ void Controller::handleSerialData()
 void Controller::sendComponentValue(ComponentID component)
 {
     if (mComponents.count(component)) {
-        Serial.write(component);
-        Serial.write(mComponents[component]->getValue());
+        uint8_t toSend[2] = {(uint8_t)component, (uint8_t)mComponents[component]->getValue()};
+        #ifdef BLUETOOTH_SERIAL
+            SerialBT.write(toSend, 2);
+        #else
+            Serial.write(toSend, 2);
+        #endif
     }
 }
 

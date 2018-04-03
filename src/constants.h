@@ -1,6 +1,9 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+// Uncomment following line to use Bluetooth serial interface instead of USB
+//#define BLUETOOTH_SERIAL
+
 #include <XIO.h>
 
 // Testing stuff
