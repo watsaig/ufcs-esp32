@@ -20,7 +20,7 @@
  * supported by that regulator.
  */
 
-class Thing 
+class Thing
 {
 public:
     Thing ();
@@ -31,13 +31,13 @@ public:
 };
 
 
-class Valve : public Thing 
+class Valve : public Thing
 {
 public:
     Valve (int pin, bool normallyOpen);
     virtual ~Valve ();
 
-    virtual void setValue(uint8_t); 
+    virtual void setValue(uint8_t);
     virtual uint8_t getValue();
 
 protected:
@@ -46,7 +46,7 @@ protected:
     uint8_t mValue; // CLOSED or OPEN
 };
 
-class Pump : public Thing 
+class Pump : public Thing
 {
 public:
     Pump (int pin);
@@ -60,14 +60,24 @@ protected:
     uint8_t mValue; // ON or OFF
 };
 
-class PressureController : public Thing 
+class PressureController : public Thing
 {
 public:
-    PressureController (int setPointPin, int measurementPin, 
+    enum interfaceType {
+        analog,
+        i2c
+    };
+
+    // Use this constructor for analog (Parker-Hannifin) pressure controllers
+    PressureController (int setPointPin, int measurementPin,
                         int setPointMaxValue, int measurementMaxValue);
+
+    // Use this constructor for i2c pressure controllers
+    PressureController (int i2cAddress);
+
     virtual ~PressureController ();
 
-    virtual void setValue(uint8_t); 
+    virtual void setValue(uint8_t);
     virtual uint8_t getValue();
 
     uint8_t setPointValue() { return mSetPointValue; }
@@ -81,6 +91,9 @@ protected:
 
     int mSetPointMaxValue;
     int mMeasurementMaxValue;
+
+    interfaceType mInterface; // a touch redundant. we could just check whether i2cAddress == -1
+    int mI2cAddress;
 };
 
 #endif

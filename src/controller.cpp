@@ -92,10 +92,13 @@ Controller::Controller()
     mComponents[PUMP1] = new Pump(PUMP1_PIN);
     mComponents[PUMP2] = new Pump(PUMP2_PIN);
 
+    /*
     mComponents[PR1] = new PressureController(PR1_SETPOINT_PIN,
                                               PR1_MEASUREMENT_PIN,
                                               DAC_MAX_VALUE,
                                               ADC_MAX_VALUE);
+      */
+    mComponents[PR1] = new PressureController(PR1_I2C_ADDRESS);
 
     mComponents[PR2] = new PressureController(PR2_SETPOINT_PIN,
                                               PR2_MEASUREMENT_PIN,

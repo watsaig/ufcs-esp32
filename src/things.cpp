@@ -96,6 +96,7 @@ PressureController::PressureController(int setPointPin,
     , mMeasuredValue(0)
     , mSetPointMaxValue(setPointMaxValue)
     , mMeasurementMaxValue(measurementMaxValue)
+    , mInterface(PressureController::analog)
 {
     pinMode(setPointPin, OUTPUT);
     pinMode(measurementPin, INPUT);
@@ -108,6 +109,20 @@ PressureController::PressureController(int setPointPin,
     setValue(0);
 }
 
+PressureController::PressureController(int i2cAddress)
+    : Thing()
+    , mSetPointPin(-1)
+    , mMeasurementPin(-1)
+    , mSetPointValue(0)
+    , mMeasuredValue(0)
+    , mSetPointMaxValue(-1)
+    , mMeasurementMaxValue(-1)
+    , mInterface(PressureController::i2c)
+    , mI2cAddress(i2cAddress)
+{
+    setValue(0);
+}
+
 PressureController::~PressureController()
 {}
 
@@ -116,8 +131,10 @@ void PressureController::setValue(uint8_t value)
 
     // check that value is between zero and the max value allowed
     // rescale to match DAC resolution, if necessary
-    if (value != mSetPointValue) {
+    if (value == mSetPointValue)
+        return;
 
+    if (mInterface == analog) {
         mSetPointValue = value;
         Log.notice("Setting pressure to %d \n", value);
 
@@ -146,33 +163,51 @@ void PressureController::setValue(uint8_t value)
             ledcWrite(1, toWrite);
         }
     }
+
+    else if (mInterface == i2c) {
+        Wire.beginTransmission(mI2cAddress);
+        Wire.write(value);
+        Wire.endTransmission();
+    }
 }
 
 uint8_t PressureController::getValue()
 {
-    long val = analogRead(mMeasurementPin);
-    val += analogRead(mMeasurementPin);
-    val += analogRead(mMeasurementPin);
-    val = round(double(val)/3.0);
+    if (mInterface == analog) {
+        long val = analogRead(mMeasurementPin);
+        val += analogRead(mMeasurementPin);
+        val += analogRead(mMeasurementPin);
+        val = round(double(val)/3.0);
 
 
 
-    /* The result of analogRead doesn't correspond linearly to the voltage applied;
-       see: https://github.com/espressif/esp-idf/issues/164
-       So a calibration curve was established by applying voltages between 0 and 5v
-       to the pressure controller pins, recording the result of analogRead, and fitting
-       a polynomial to the data.
-       If and when Espressif fix the analogRead() function to take into account the
-       non-linearity, the following fit can be replaced by a simple rescaling
-    */
+        /* The result of analogRead doesn't correspond linearly to the voltage applied;
+           see: https://github.com/espressif/esp-idf/issues/164
+           So a calibration curve was established by applying voltages between 0 and 5v
+           to the pressure controller pins, recording the result of analogRead, and fitting
+           a polynomial to the data.
+           If and when Espressif fix the analogRead() function to take into account the
+           non-linearity, the following fit can be replaced by a simple rescaling
+        */
 
-    double x = val;
-    double y = -3e-12*pow(x, 3) - 7e-10*pow(x, 2) + 0.0003*x + 0.0169;
+        double x = val;
+        double y = -3e-12*pow(x, 3) - 7e-10*pow(x, 2) + 0.0003*x + 0.0169;
 
-    mMeasuredValue = std::min(255, std::max(0, int(round(y*UINT8_MAX))));
+        mMeasuredValue = std::min(255, std::max(0, int(round(y*UINT8_MAX))));
 
-    // Rescale value to match range of uint8_t (0 to 255)
-    //mMeasuredValue = double(val)/double(mMeasurementMaxValue) * UINT8_MAX;
+        // Rescale value to match range of uint8_t (0 to 255)
+        //mMeasuredValue = double(val)/double(mMeasurementMaxValue) * UINT8_MAX;
 
-    return mMeasuredValue;
+        return mMeasuredValue;
+    }
+
+    else {
+        Wire.requestFrom(mI2cAddress, 1);
+        uint8_t val;
+        // discard all but the last value received
+        while(Wire.available()) {
+            val = Wire.read();
+        }
+        return val;
+    }
 }
