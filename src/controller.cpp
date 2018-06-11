@@ -244,11 +244,11 @@ void Controller::handleSerialData()
 void Controller::sendComponentValue(ComponentID component)
 {
     if (mComponents.count(component)) {
-        uint8_t toSend[2] = {(uint8_t)component, (uint8_t)mComponents[component]->getValue()};
+        uint8_t toSend[4] = {START_BYTE, (uint8_t)component, (uint8_t)mComponents[component]->getValue(), END_BYTE};
         #ifdef BLUETOOTH_SERIAL
-            SerialBT.write(toSend, 2);
+            SerialBT.write(toSend, 4);
         #else
-            Serial.write(toSend, 2);
+            Serial.write(toSend, 4);
         #endif
     }
 }

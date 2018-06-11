@@ -83,6 +83,10 @@
 
 // Constants for serial communication -- don't edit (or also edit them on the PC side)
 // ---------------------------------------
+
+#define START_BYTE 249
+#define END_BYTE 250
+
 enum ComponentID : uint8_t {
     VALVE1 = 0,
     VALVE2,
