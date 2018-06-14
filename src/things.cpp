@@ -97,6 +97,7 @@ PressureController::PressureController(int setPointPin,
     , mSetPointMaxValue(setPointMaxValue)
     , mMeasurementMaxValue(measurementMaxValue)
     , mInterface(PressureController::analog)
+    , mInputPressureTooLow(true)
 {
     pinMode(setPointPin, OUTPUT);
     pinMode(measurementPin, INPUT);
@@ -202,12 +203,23 @@ uint8_t PressureController::getValue()
     }
 
     else {
-        Wire.requestFrom(mI2cAddress, 1);
-        uint8_t val;
-        // discard all but the last value received
-        while(Wire.available()) {
-            val = Wire.read();
+        int b = Wire.requestFrom(mI2cAddress, 2);
+
+        if (b == 2) {
+            mMeasuredValue = Wire.read();
+            mInputPressureTooLow = (Wire.read() == 1);
         }
-        return val;
+
+        else if (b == 0) {
+            Serial.println("Pressure regulator did not respond");
+        }
+
+        else {
+            Serial.print("Pressure regulator returned ");
+            Serial.print(b);
+            Serial.println(" bytes instead of the expected 2");
+        }
+
+        return mMeasuredValue;
     }
 }

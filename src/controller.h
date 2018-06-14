@@ -47,11 +47,13 @@ private:
 
     unsigned long mTimer;
     unsigned long mPressureControlTimer;
+    unsigned long mPumpLastSwitchOnTime;
 
     XIO mXioBoard;
     bool mXIORefreshRequested;
 
     std::map<ComponentID, Thing*> mComponents;
+
 
 #ifdef NEOPIXELS
 

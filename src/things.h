@@ -82,6 +82,8 @@ public:
 
     uint8_t setPointValue() { return mSetPointValue; }
 
+    bool isInputPressureTooLow() { return mInputPressureTooLow; }
+
 protected:
     int mSetPointPin;
     int mMeasurementPin;
@@ -94,6 +96,8 @@ protected:
 
     interfaceType mInterface; // a touch redundant. we could just check whether i2cAddress == -1
     int mI2cAddress;
+
+    bool mInputPressureTooLow;
 };
 
 #endif

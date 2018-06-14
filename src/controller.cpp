@@ -118,6 +118,7 @@ Controller::Controller()
 
     mTimer = millis();
     mPressureControlTimer = millis();
+    mPumpLastSwitchOnTime = millis();
 
 #ifdef NEOPIXELS
 //    initNeopixelStrip();
@@ -144,12 +145,10 @@ void Controller::update()
         mTimer = millis();
     }
 
-    /*
     if ((millis() - mPressureControlTimer) > 500) {
         pressureControl();
         mPressureControlTimer = millis();
     }
-    */
 
 #ifdef BLUETOOTH_SERIAL
     if (SerialBT.available())
@@ -263,7 +262,6 @@ void Controller::sendAllComponentValues()
     }
 }
 
-
 void Controller::pressureControl()
 {
     // Pressure control: if the current pressure is above a certain threshold,
@@ -275,12 +273,25 @@ void Controller::pressureControl()
 
     // For now: just one PR connected to 1 pump.
 
-    PressureController * pc = static_cast<PressureController*>(mComponents[PR1]);
-    uint8_t setPoint = pc->setPointValue();
-    uint8_t current = pc->getValue();
+    PressureController * pc1 = static_cast<PressureController*>(mComponents[PR1]);
+    PressureController * pc2 = static_cast<PressureController*>(mComponents[PR2]);
+    Pump * pump = static_cast<Pump*>(mComponents[PUMP1]);
 
-    if (current < PRESSURE_LOW_THRESHOLD_RATIO*setPoint)
-        mComponents[PUMP1]->setValue(ON);
-    else if (current > PRESSURE_HIGH_THRESHOLD_RATIO*setPoint)
-        mComponents[PUMP1]->setValue(OFF);
+    // If the supply pressure is not indicated as too low, and it has been that way
+    // for at least 2 seconds, we switch the pump off.
+
+
+    if (pump->getValue() == ON &&
+        !pc1->isInputPressureTooLow() &&
+        //!pc2->isInputPressureTooLow() &&
+        millis() - mPumpLastSwitchOnTime > 2000)
+    {
+            pump->setValue(OFF);
+    }
+    else if (pump->getValue() == OFF &&
+             pc1->isInputPressureTooLow())
+    {
+        pump->setValue(ON);
+        mPumpLastSwitchOnTime = millis();
+    }
 }
