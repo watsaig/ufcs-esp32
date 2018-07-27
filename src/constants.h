@@ -2,7 +2,7 @@
 #define CONSTANTS_H
 
 // Uncomment following line to use Bluetooth serial interface instead of USB
-//#define BLUETOOTH_SERIAL
+#define BLUETOOTH_SERIAL
 
 #include <XIO.h>
 
@@ -10,7 +10,7 @@
 // ---------------------------------------
 
 // if the following line is uncommented, the neopixel-related code in controller.[h/cpp] will be compiled (switching LEDs on/off when valves are toggled)
-#define NEOPIXELS
+//#define NEOPIXELS
 #define NEOPIXELS_DATA_PIN 14
 
 
@@ -27,7 +27,8 @@
 
 //#define PR1_SETPOINT_PIN DAC0
 #define PR1_I2C_ADDRESS 43
-#define PR2_SETPOINT_PIN DAC1
+#define PR2_I2C_ADDRESS 44
+//#define PR2_SETPOINT_PIN DAC1
 #define PR3_SETPOINT_PIN 32
 
 //#define PR1_MEASUREMENT_PIN 36

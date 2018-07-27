@@ -166,6 +166,7 @@ void PressureController::setValue(uint8_t value)
     }
 
     else if (mInterface == i2c) {
+        mSetPointValue = value;
         Wire.beginTransmission(mI2cAddress);
         Wire.write(value);
         Wire.endTransmission();
@@ -211,7 +212,9 @@ uint8_t PressureController::getValue()
         }
 
         else if (b == 0) {
-            Serial.println("Pressure regulator did not respond");
+            Serial.print("Pressure regulator at address ");
+            Serial.print(mI2cAddress);
+            Serial.println(" did not respond");
         }
 
         else {

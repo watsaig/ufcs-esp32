@@ -31,6 +31,8 @@ void setup()
     #ifdef NEOPIXELS
     controller.initNeoPixelStrip();
     #endif
+
+    delay(1000); // give peripherals time to start up
 }
 
 void loop()

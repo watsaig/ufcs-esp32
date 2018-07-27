@@ -99,11 +99,14 @@ Controller::Controller()
                                               ADC_MAX_VALUE);
       */
     mComponents[PR1] = new PressureController(PR1_I2C_ADDRESS);
+    mComponents[PR2] = new PressureController(PR2_I2C_ADDRESS);
 
+    /*
     mComponents[PR2] = new PressureController(PR2_SETPOINT_PIN,
                                               PR2_MEASUREMENT_PIN,
                                               DAC_MAX_VALUE,
                                               ADC_MAX_VALUE);
+                                              */
 
     mComponents[PR3] = new PressureController(PR3_SETPOINT_PIN,
                                               PR3_MEASUREMENT_PIN,
@@ -127,8 +130,6 @@ Controller::Controller()
 
 Controller::~Controller()
 {}
-
-unsigned long pressureControlTimer;
 
 /**
   * This function should be called by loop().
@@ -280,16 +281,19 @@ void Controller::pressureControl()
     // If the supply pressure is not indicated as too low, and it has been that way
     // for at least 2 seconds, we switch the pump off.
 
+    if (pc1->setPointValue() == 0 && pc2->setPointValue() == 0) {
+        pump->setValue(OFF);
+    }
 
-    if (pump->getValue() == ON &&
+    else if (pump->getValue() == ON &&
         !pc1->isInputPressureTooLow() &&
-        //!pc2->isInputPressureTooLow() &&
-        millis() - mPumpLastSwitchOnTime > 2000)
+        !pc2->isInputPressureTooLow() &&
+        millis() - mPumpLastSwitchOnTime > 5000)
     {
             pump->setValue(OFF);
     }
     else if (pump->getValue() == OFF &&
-             pc1->isInputPressureTooLow())
+             (pc1->isInputPressureTooLow() || pc2-> isInputPressureTooLow()))
     {
         pump->setValue(ON);
         mPumpLastSwitchOnTime = millis();
