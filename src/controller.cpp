@@ -263,6 +263,16 @@ void Controller::sendAllComponentValues()
     }
 }
 
+void Controller::sendErrorCode(Errors code)
+{
+        uint8_t toSend[4] = {START_BYTE, ERROR, code, END_BYTE};
+        #ifdef BLUETOOTH_SERIAL
+            SerialBT.write(toSend, 4);
+        #else
+            Serial.write(toSend, 4);
+        #endif
+}
+
 void Controller::pressureControl()
 {
     // Pressure control: if the current pressure is above a certain threshold,

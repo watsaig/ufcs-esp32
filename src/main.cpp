@@ -14,22 +14,24 @@ BluetoothSerial SerialBT;
 Controller controller;
 // ----------------------------------------
 
+// Log level should be "LOG_LEVEL_VERBOSE" for debugging, and "LOG_LEVEL_ERROR" for production code.
+#define LOG_LEVEL LOG_LEVEL_ERROR
 void setup()
 {
     Serial.begin(115200);
 
-    // Log level should be "LOG_LEVEL_VERBOSE" for debugging, and "LOG_LEVEL_ERROR" for production code.
-    Log.begin(LOG_LEVEL_ERROR, &Serial);
 
     #ifdef BLUETOOTH_SERIAL
-    SerialBT.begin("Microfluidics control system");
+        SerialBT.begin("Microfluidics control system");
+        // Sending long messages over bluetooth seems to be buggy; in the meantime, logging is enabled only for USB.
+        //Log.begin(LOG_LEVEL, &SerialBT);
+    #else
+        Log.begin(LOG_LEVEL, &Serial);
     #endif
 
-    // Wait for serial to attach
-    while (!Serial);
 
     #ifdef NEOPIXELS
-    controller.initNeoPixelStrip();
+        controller.initNeoPixelStrip();
     #endif
 
     delay(1000); // give peripherals time to start up

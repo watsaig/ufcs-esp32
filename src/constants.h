@@ -143,6 +143,13 @@ enum SerialRequests : uint8_t {
     STATUS_REQUEST = OFF+1 // request status of a certain component (or all)
 };
 
+enum Errors : uint8_t {
+    ERROR = STATUS_REQUEST+1,
+    NO_ERROR,
+    UNKNOWN,
+    PRESSURE_REGULATOR_NOT_RESPONDING
+};
+
 // ---------------------------------------
 
 #endif

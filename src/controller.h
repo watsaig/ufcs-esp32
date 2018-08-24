@@ -38,6 +38,8 @@ public:
     void xioPinMode(int pin, int mode);
     void xioDigitalWrite(int pin, int value);
 
+    void sendErrorCode(Errors code);
+
 private:
     void handleSerialData();
     void sendComponentValue(ComponentID component);

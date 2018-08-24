@@ -212,16 +212,12 @@ uint8_t PressureController::getValue()
         }
 
         else if (b == 0) {
-            Serial.print("Pressure regulator at address ");
-            Serial.print(mI2cAddress);
-            Serial.println(" did not respond");
+            Log.error("Pressure regulator at address %d did not respond\n", mI2cAddress);
+            controller.sendErrorCode(PRESSURE_REGULATOR_NOT_RESPONDING);
         }
 
-        else {
-            Serial.print("Pressure regulator returned ");
-            Serial.print(b);
-            Serial.println(" bytes instead of the expected 2");
-        }
+        else
+            Log.error("Pressure regulator returned %d bytes instead of the expected 2\n");
 
         return mMeasuredValue;
     }
