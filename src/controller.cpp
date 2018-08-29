@@ -261,6 +261,8 @@ void Controller::sendAllComponentValues()
     for (auto const& i : mComponents) {
         sendComponentValue(i.first);
     }
+
+    sendUptime();
 }
 
 /**
@@ -273,6 +275,27 @@ void Controller::sendErrorCode(Errors code)
         SerialBT.write(toSend, 4);
     #else
         Serial.write(toSend, 4);
+    #endif
+}
+
+/**
+  * @brief Send the current uptime (in seconds) over serial.
+  */
+void Controller::sendUptime()
+{
+    unsigned long uptime = millis() / 1000;
+    uint8_t value0, value1, value2, value3;
+
+    value0 = (uptime & 0xFF000000) >> 24;
+    value1 = (uptime & 0x00FF0000) >> 16;
+    value2 = (uptime & 0x0000FF00) >> 8;
+    value3 = (uptime & 0x000000FF);
+
+    uint8_t toSend[7] = {START_BYTE, UPTIME, value0, value1, value2, value3, END_BYTE};
+    #ifdef BLUETOOTH_SERIAL
+        SerialBT.write(toSend, 7);
+    #else
+        Serial.write(toSend, 7);
     #endif
 }
 

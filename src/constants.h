@@ -140,7 +140,8 @@ enum PumpStates : uint8_t {
 };
 
 enum SerialRequests : uint8_t {
-    STATUS_REQUEST = OFF+1 // request status of a certain component (or all)
+    STATUS_REQUEST = OFF+1, // request status of a certain component (or all)
+    UPTIME
 };
 
 enum Errors : uint8_t {
