@@ -316,11 +316,13 @@ void Controller::pressureControl()
         millis() - mPumpLastSwitchOnTime > 5000)
     {
             pump->setValue(OFF);
+            sendComponentValue(PUMP1);
     }
     else if (pump->getValue() == OFF &&
              (pc1->isInputPressureTooLow() || pc2-> isInputPressureTooLow()))
     {
         pump->setValue(ON);
         mPumpLastSwitchOnTime = millis();
+        sendComponentValue(PUMP1);
     }
 }
