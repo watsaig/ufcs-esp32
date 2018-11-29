@@ -108,12 +108,6 @@ Controller::Controller()
                                               ADC_MAX_VALUE);
                                               */
 
-    mComponents[PR3] = new PressureController(PR3_SETPOINT_PIN,
-                                              PR3_MEASUREMENT_PIN,
-                                              PWM_MAX_VALUE,
-                                              ADC_MAX_VALUE);
-
-
 
     // Set all pin modes, and default values (LOW; see Valve::Valve())
     mXioBoard.refreshPinModes();
@@ -141,7 +135,6 @@ void Controller::update()
     if ((millis() - mTimer) > 500) {
         sendComponentValue(PR1);
         sendComponentValue(PR2);
-        sendComponentValue(PR3);
 
         mTimer = millis();
     }
@@ -305,7 +298,6 @@ void Controller::pressureControl()
     // we turn the pump off. If it is below a certain threshold (all relative to
     // the setpoint), we turn the pump on.
     // Pressure controllers 1 and 2 are connected to pump 1 (positive pressure);
-    // Pressure controller 3 is connected to pump 2 (vacuum).
 
 
     // For now: just one PR connected to 1 pump.

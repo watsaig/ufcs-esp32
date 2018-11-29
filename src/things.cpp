@@ -102,11 +102,6 @@ PressureController::PressureController(int setPointPin,
     pinMode(setPointPin, OUTPUT);
     pinMode(measurementPin, INPUT);
 
-    if (mSetPointPin == PR3_SETPOINT_PIN) {
-        ledcAttachPin(PR3_SETPOINT_PIN, 1);
-        ledcSetup(1, PWM_FREQ, PWM_RESOLUTION);
-    }
-
     setValue(0);
 }
 
@@ -148,21 +143,11 @@ void PressureController::setValue(uint8_t value)
 
         double x = double(value)/double(UINT8_MAX);
 
-        if (mSetPointPin == DAC0 || mSetPointPin == DAC1) {
-            double y = 0.3306*pow(x, 3) - 0.428*pow(x, 2) + 1.0961*x - 0.0258;
-            int toWrite = std::min(mSetPointMaxValue,
-                                   std::max(0, int(round(y*mSetPointMaxValue))));
+        double y = 0.3306*pow(x, 3) - 0.428*pow(x, 2) + 1.0961*x - 0.0258;
+        int toWrite = std::min(mSetPointMaxValue,
+                               std::max(0, int(round(y*mSetPointMaxValue))));
 
-            dacWrite(mSetPointPin, toWrite);
-        }
-        else {
-
-            double y = 0.3689*pow(x, 3) - 0.4627*pow(x, 2) + 1.0525*x - 0.004;
-
-            int toWrite = std::min(mSetPointMaxValue,
-                                   std::max(0, int(round(y*mSetPointMaxValue))));
-            ledcWrite(1, toWrite);
-        }
+        dacWrite(mSetPointPin, toWrite);
     }
 
     else if (mInterface == i2c) {

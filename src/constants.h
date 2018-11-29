@@ -19,8 +19,8 @@
 #define XIO_RESET_PIN 13
 #define XIO_OE_PIN 12
 
-#define PUMP1_PIN 33
-#define PUMP2_PIN 27
+#define PUMP1_PIN 32
+#define PUMP2_PIN 33
 
 #define DAC0 25
 #define DAC1 26
@@ -29,11 +29,9 @@
 #define PR1_I2C_ADDRESS 43
 #define PR2_I2C_ADDRESS 44
 //#define PR2_SETPOINT_PIN DAC1
-#define PR3_SETPOINT_PIN 32
 
 //#define PR1_MEASUREMENT_PIN 36
 #define PR2_MEASUREMENT_PIN 39
-#define PR3_MEASUREMENT_PIN 34
 
 #define DAC_MAX_VALUE 255
 #define ADC_MAX_VALUE 4095
