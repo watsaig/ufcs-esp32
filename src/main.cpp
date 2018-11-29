@@ -20,6 +20,7 @@ void setup()
 {
     Serial.begin(115200);
 
+    controller.init();
 
     #ifdef BLUETOOTH_SERIAL
         SerialBT.begin("Microfluidics control system");

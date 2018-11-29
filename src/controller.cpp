@@ -18,15 +18,13 @@ void Controller::initNeoPixelStrip()
     delay(1);
     mStrip.Show();
 
-    for (size_t i = VALVE1; i < VALVE24; i++) {
-      //mStrip.SetPixelColor(i, red);
+    for (size_t i = VALVE1; i <= VALVE32; i++) {
         if (mComponents[static_cast<ComponentID>(i)]->getValue() == OPEN)
             mStrip.SetPixelColor(i, green);
         else
             mStrip.SetPixelColor(i, red);
-
-
     }
+
     delay(1);
     mStrip.Show();
 }
@@ -48,46 +46,48 @@ extern BluetoothSerial SerialBT;
 Controller::Controller()
     : mXIORefreshRequested(false)
 {
+}
+
+void Controller::init()
+{
     Wire.begin();
     mXioBoard.begin(LOW, LOW, LOW, XIO_RESET_PIN , XIO_OE_PIN);
 
-    mComponents[VALVE1] = new Valve(VALVE1_PIN, true);
-    mComponents[VALVE2] = new Valve(VALVE2_PIN, true);
-    mComponents[VALVE3] = new Valve(VALVE3_PIN, true);
-    mComponents[VALVE4] = new Valve(VALVE4_PIN, true);
-    mComponents[VALVE5] = new Valve(VALVE5_PIN, true);
-    mComponents[VALVE6] = new Valve(VALVE6_PIN, true);
-    mComponents[VALVE7] = new Valve(VALVE7_PIN, true);
-    mComponents[VALVE8] = new Valve(VALVE8_PIN, true);
+    mComponents[VALVE1] = new Valve(VALVE1_PIN);
+    mComponents[VALVE2] = new Valve(VALVE2_PIN);
+    mComponents[VALVE3] = new Valve(VALVE3_PIN);
+    mComponents[VALVE4] = new Valve(VALVE4_PIN);
+    mComponents[VALVE5] = new Valve(VALVE5_PIN);
+    mComponents[VALVE6] = new Valve(VALVE6_PIN);
+    mComponents[VALVE7] = new Valve(VALVE7_PIN);
+    mComponents[VALVE8] = new Valve(VALVE8_PIN);
 
-    mComponents[VALVE9] = new Valve(VALVE9_PIN, true);
-    mComponents[VALVE10] = new Valve(VALVE10_PIN, true);
-    mComponents[VALVE11] = new Valve(VALVE11_PIN, true);
-    mComponents[VALVE12] = new Valve(VALVE12_PIN, true);
-    mComponents[VALVE13] = new Valve(VALVE13_PIN, true);
-    mComponents[VALVE14] = new Valve(VALVE14_PIN, true);
-    mComponents[VALVE15] = new Valve(VALVE15_PIN, true);
-    mComponents[VALVE16] = new Valve(VALVE16_PIN, true);
+    mComponents[VALVE9] = new Valve(VALVE9_PIN);
+    mComponents[VALVE10] = new Valve(VALVE10_PIN);
+    mComponents[VALVE11] = new Valve(VALVE11_PIN);
+    mComponents[VALVE12] = new Valve(VALVE12_PIN);
+    mComponents[VALVE13] = new Valve(VALVE13_PIN);
+    mComponents[VALVE14] = new Valve(VALVE14_PIN);
+    mComponents[VALVE15] = new Valve(VALVE15_PIN);
+    mComponents[VALVE16] = new Valve(VALVE16_PIN);
 
-    mComponents[VALVE17] = new Valve(VALVE17_PIN, false);
-    mComponents[VALVE18] = new Valve(VALVE18_PIN, false);
-    mComponents[VALVE19] = new Valve(VALVE19_PIN, false);
-    mComponents[VALVE20] = new Valve(VALVE20_PIN, false);
-    mComponents[VALVE21] = new Valve(VALVE21_PIN, false);
-    mComponents[VALVE22] = new Valve(VALVE25_PIN, false);
-    mComponents[VALVE23] = new Valve(VALVE26_PIN, false);
-    /*
-    mComponents[VALVE24] = new Valve(VALVE24_PIN, true);
+    mComponents[VALVE17] = new Valve(VALVE17_PIN);
+    mComponents[VALVE18] = new Valve(VALVE18_PIN);
+    mComponents[VALVE19] = new Valve(VALVE19_PIN);
+    mComponents[VALVE20] = new Valve(VALVE20_PIN);
+    mComponents[VALVE21] = new Valve(VALVE21_PIN);
+    mComponents[VALVE22] = new Valve(VALVE22_PIN);
+    mComponents[VALVE23] = new Valve(VALVE23_PIN);
+    mComponents[VALVE24] = new Valve(VALVE24_PIN);
 
-    mComponents[VALVE25] = new Valve(VALVE25_PIN, true);
-    mComponents[VALVE26] = new Valve(VALVE26_PIN, true);
-    mComponents[VALVE27] = new Valve(VALVE27_PIN, true);
-    mComponents[VALVE28] = new Valve(VALVE28_PIN, true);
-    mComponents[VALVE29] = new Valve(VALVE29_PIN, true);
-    mComponents[VALVE30] = new Valve(VALVE30_PIN, true);
-    mComponents[VALVE31] = new Valve(VALVE31_PIN, true);
-    mComponents[VALVE32] = new Valve(VALVE32_PIN, true);
-    */
+    mComponents[VALVE25] = new Valve(VALVE25_PIN, false);
+    mComponents[VALVE26] = new Valve(VALVE26_PIN, false);
+    mComponents[VALVE27] = new Valve(VALVE27_PIN, false);
+    mComponents[VALVE28] = new Valve(VALVE28_PIN, false);
+    mComponents[VALVE29] = new Valve(VALVE29_PIN, false);
+    mComponents[VALVE30] = new Valve(VALVE30_PIN, false);
+    mComponents[VALVE31] = new Valve(VALVE31_PIN, false);
+    mComponents[VALVE32] = new Valve(VALVE32_PIN, false);
 
     mComponents[PUMP1] = new Pump(PUMP1_PIN);
     mComponents[PUMP2] = new Pump(PUMP2_PIN);

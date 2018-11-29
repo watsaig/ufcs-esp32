@@ -31,6 +31,7 @@ class Controller
 
 public:
     Controller ();
+    void init();
     virtual ~Controller ();
 
     void update();
