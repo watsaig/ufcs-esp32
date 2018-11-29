@@ -1,7 +1,6 @@
 #ifndef THINGS_H
 #define THINGS_H
 
-#include <Wire.h>
 #include <ArduinoLog.h>
 
 #include "constants.h"

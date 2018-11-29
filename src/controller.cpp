@@ -117,9 +117,6 @@ void Controller::init()
     mPressureControlTimer = millis();
     mPumpLastSwitchOnTime = millis();
 
-#ifdef NEOPIXELS
-//    initNeopixelStrip();
-#endif
 }
 
 Controller::~Controller()
