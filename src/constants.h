@@ -145,7 +145,7 @@ enum SerialRequests : uint8_t {
 };
 
 enum Errors : uint8_t {
-    ERROR = STATUS_REQUEST+1,
+    ERROR = UPTIME+1,
     NO_ERROR,
     UNKNOWN,
     PRESSURE_REGULATOR_NOT_RESPONDING
