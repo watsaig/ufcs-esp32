@@ -34,7 +34,7 @@ public:
 class Valve : public Thing
 {
 public:
-    Valve (int pin, bool normallyOpen);
+    Valve (int pin, bool normallyOpen = true);
     virtual ~Valve ();
 
     virtual void setValue(uint8_t);
