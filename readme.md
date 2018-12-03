@@ -4,7 +4,7 @@ Code for the microcontroller-side of the microfluidics control system. Please se
 
 ## Install
 
-If you have PlatformIO already, all you need to do is import the project, plug in your ESP32 and hit Upload. If not, follow these instructions to set up everything.
+If you have PlatformIO already, all you need to do is import the project, plug in your ESP32 and hit Upload. If not, you can obtain it [here](https://platformio.org/platformio-ide).
 
 
 ## Customizing the code to your hardware setup
