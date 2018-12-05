@@ -214,10 +214,11 @@ void Controller::handleSerialData()
         }
 
         else if (firstByte >= VALVE1 && firstByte < ALL_COMPONENTS) {
-            if (mComponents.count(static_cast<ComponentID>(firstByte))) {
+            ComponentID component = static_cast<ComponentID>(firstByte);
+            if (mComponents.count(component)) {
                 // Set requested value and communicate the new state
-                mComponents[static_cast<ComponentID>(firstByte)]->setValue(secondByte);
-                sendComponentValue(static_cast<ComponentID>(firstByte));
+                mComponents[component]->setValue(secondByte);
+                sendComponentValue(component);
 
 #ifdef NEOPIXELS
                 setNeoPixel(firstByte - VALVE1, (secondByte == OPEN ? green : red));
@@ -234,7 +235,9 @@ void Controller::handleSerialData()
 void Controller::sendComponentValue(ComponentID component)
 {
     if (mComponents.count(component)) {
-        uint8_t toSend[4] = {START_BYTE, (uint8_t)component, (uint8_t)mComponents[component]->getValue(), END_BYTE};
+        uint8_t value = mComponents[component]->getValue();
+        uint8_t toSend[4] = {START_BYTE, (uint8_t)component, value, END_BYTE};
+
         #ifdef BLUETOOTH_SERIAL
             SerialBT.write(toSend, 4);
         #else
@@ -248,9 +251,8 @@ void Controller::sendComponentValue(ComponentID component)
   */
 void Controller::sendAllComponentValues()
 {
-    for (auto const& i : mComponents) {
+    for (auto const& i : mComponents)
         sendComponentValue(i.first);
-    }
 
     sendUptime();
 }
@@ -289,31 +291,36 @@ void Controller::sendUptime()
     #endif
 }
 
+/**
+  * @brief Turn pump(s) on and off automatically
+  *
+  * If the current pressure is above a certain threshold, the pump is turned off.
+  * This is based on the digital pressure regulators' feedback. They signal
+  * whether input pressure is sufficient or not. If it is signaled as being too
+  * low, then the pump is switched on for at least 3 seconds and until the
+  * regulator stops signaling that pressure is too low.
+  *
+  */
 void Controller::pressureControl()
 {
-    // Pressure control: if the current pressure is above a certain threshold,
-    // we turn the pump off. If it is below a certain threshold (all relative to
-    // the setpoint), we turn the pump on.
-    // Pressure controllers 1 and 2 are connected to pump 1 (positive pressure);
-
-
-    // For now: just one PR connected to 1 pump.
+    // In this configuration, the first two pressure regulators are connected
+    // to pump 1.
 
     PressureController * pc1 = static_cast<PressureController*>(mComponents[PR1]);
     PressureController * pc2 = static_cast<PressureController*>(mComponents[PR2]);
     Pump * pump = static_cast<Pump*>(mComponents[PUMP1]);
 
-    // If the supply pressure is not indicated as too low, and it has been that way
-    // for at least 2 seconds, we switch the pump off.
-
+    // Switch the pump off if the setpoints are at 0
     if (pc1->setPointValue() == 0 && pc2->setPointValue() == 0) {
         pump->setValue(OFF);
     }
 
+    // If the pressure is sufficient, and the pump has been on for at least
+    // 3 seconds (to build up a little extra pressure), then turn it off.
     else if (pump->getValue() == ON &&
         !pc1->isInputPressureTooLow() &&
         !pc2->isInputPressureTooLow() &&
-        millis() - mPumpLastSwitchOnTime > 5000)
+        millis() - mPumpLastSwitchOnTime > 3000)
     {
             pump->setValue(OFF);
             sendComponentValue(PUMP1);
