@@ -318,13 +318,14 @@ void Controller::pressureControl()
     // If the pressure is sufficient, and the pump has been on for at least
     // 3 seconds (to build up a little extra pressure), then turn it off.
     else if (pump->getValue() == ON &&
-        !pc1->isInputPressureTooLow() &&
-        !pc2->isInputPressureTooLow() &&
-        millis() - mPumpLastSwitchOnTime > 3000)
+             !pc1->isInputPressureTooLow() &&
+             !pc2->isInputPressureTooLow() &&
+             millis() - mPumpLastSwitchOnTime > 3000)
     {
-            pump->setValue(OFF);
-            sendComponentValue(PUMP1);
+        pump->setValue(OFF);
+        sendComponentValue(PUMP1);
     }
+    
     else if (pump->getValue() == OFF &&
              (pc1->isInputPressureTooLow() || pc2-> isInputPressureTooLow()))
     {
