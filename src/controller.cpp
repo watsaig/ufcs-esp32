@@ -71,23 +71,23 @@ void Controller::init()
     mComponents[VALVE15] = new Valve(VALVE15_PIN);
     mComponents[VALVE16] = new Valve(VALVE16_PIN);
 
-    mComponents[VALVE17] = new Valve(VALVE17_PIN);
-    mComponents[VALVE18] = new Valve(VALVE18_PIN);
-    mComponents[VALVE19] = new Valve(VALVE19_PIN);
-    mComponents[VALVE20] = new Valve(VALVE20_PIN);
-    mComponents[VALVE21] = new Valve(VALVE21_PIN);
-    mComponents[VALVE22] = new Valve(VALVE22_PIN);
-    mComponents[VALVE23] = new Valve(VALVE23_PIN);
-    mComponents[VALVE24] = new Valve(VALVE24_PIN);
+    mComponents[VALVE17] = new Valve(VALVE17_PIN, false);
+    mComponents[VALVE18] = new Valve(VALVE18_PIN, false);
+    mComponents[VALVE19] = new Valve(VALVE19_PIN, false);
+    mComponents[VALVE20] = new Valve(VALVE20_PIN, false);
+    mComponents[VALVE21] = new Valve(VALVE21_PIN, false);
+    mComponents[VALVE22] = new Valve(VALVE22_PIN, false);
+    mComponents[VALVE23] = new Valve(VALVE23_PIN, false);
+    mComponents[VALVE24] = new Valve(VALVE24_PIN, false);
 
-    mComponents[VALVE25] = new Valve(VALVE25_PIN, false);
-    mComponents[VALVE26] = new Valve(VALVE26_PIN, false);
-    mComponents[VALVE27] = new Valve(VALVE27_PIN, false);
-    mComponents[VALVE28] = new Valve(VALVE28_PIN, false);
-    mComponents[VALVE29] = new Valve(VALVE29_PIN, false);
-    mComponents[VALVE30] = new Valve(VALVE30_PIN, false);
-    mComponents[VALVE31] = new Valve(VALVE31_PIN, false);
-    mComponents[VALVE32] = new Valve(VALVE32_PIN, false);
+    mComponents[VALVE25] = new Valve(VALVE25_PIN);
+    mComponents[VALVE26] = new Valve(VALVE26_PIN);
+    mComponents[VALVE27] = new Valve(VALVE27_PIN);
+    mComponents[VALVE28] = new Valve(VALVE28_PIN);
+    mComponents[VALVE29] = new Valve(VALVE29_PIN);
+    mComponents[VALVE30] = new Valve(VALVE30_PIN);
+    mComponents[VALVE31] = new Valve(VALVE31_PIN);
+    mComponents[VALVE32] = new Valve(VALVE32_PIN);
 
     mComponents[PUMP1] = new Pump(PUMP1_PIN);
     mComponents[PUMP2] = new Pump(PUMP2_PIN);
