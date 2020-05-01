@@ -19,6 +19,7 @@ Controller controller;
 void setup()
 {
     Serial.begin(38400);
+    delay(1000); // give peripherals time to start up
 
     controller.init();
 
@@ -30,12 +31,9 @@ void setup()
         Log.begin(LOG_LEVEL, &Serial);
     #endif
 
-
     #ifdef NEOPIXELS
         controller.initNeoPixelStrip();
     #endif
-
-    delay(1000); // give peripherals time to start up
 }
 
 void loop()
