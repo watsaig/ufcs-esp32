@@ -220,6 +220,9 @@ void Controller::handleSerialData()
                 mComponents[component]->setValue(secondByte);
                 sendComponentValue(component);
 
+                // Pressure regulators should communicate both their value and setpoint
+                if (component == PR1 || component == PR2 || component == PR3)
+                    sendPressureSetpoint(component);
 #ifdef NEOPIXELS
                 setNeoPixel(firstByte - VALVE1, (secondByte == OPEN ? green : red));
 #endif
@@ -247,6 +250,34 @@ void Controller::sendComponentValue(ComponentID component)
 }
 
 /**
+ * @brief Send the setpoint of the given pressure regulator
+ */
+void Controller::sendPressureSetpoint(ComponentID component)
+{
+    // This is a really dirty implementation. But doing this properly requires
+    // a major rewrite, so this will have to do for now.
+
+    if (!mComponents.count(component))
+        return;
+
+    ComponentID c = PR3_SP;
+    if (component == PR1)
+        c = PR1_SP;
+    else if (component == PR2)
+        c = PR2_SP;
+
+
+    PressureController* pc = static_cast<PressureController*>(mComponents[component]);
+    uint8_t val = pc->setPointValue();
+    uint8_t toSend[4] = {START_BYTE, c, val, END_BYTE};
+    #ifdef BLUETOOTH_SERIAL
+        SerialBT.write(toSend, 4);
+    #else
+        Serial.write(toSend, 4);
+    #endif
+}
+
+/**
   * @brief Write the value of all components to serial.
   */
 void Controller::sendAllComponentValues()
@@ -254,6 +285,9 @@ void Controller::sendAllComponentValues()
     for (auto const& i : mComponents)
         sendComponentValue(i.first);
 
+    sendPressureSetpoint(PR1);
+    sendPressureSetpoint(PR2);
+    sendPressureSetpoint(PR3);
     sendUptime();
 }
 

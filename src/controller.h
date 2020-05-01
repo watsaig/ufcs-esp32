@@ -44,6 +44,7 @@ public:
 private:
     void handleSerialData();
     void sendComponentValue(ComponentID component);
+    void sendPressureSetpoint(ComponentID component);
     void sendAllComponentValues();
     void sendUptime();
 
