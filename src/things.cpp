@@ -14,7 +14,7 @@ Valve::Valve(int pin, bool normallyOpen)
     : Thing()
     , mPin(pin)
     , mNormallyOpen(normallyOpen)
-    , mValue(normallyOpen ? OPEN : CLOSED)
+    , mValue(normallyOpen)
 {
     // Valves are intially powered off, i.e their initial value depends on whether they are
     // normally open or normally closed.
@@ -39,11 +39,11 @@ void Valve::setValue(uint8_t value)
         mValue = value;
 
         int pinLevel = LOW;
-        if ((value == OPEN && !mNormallyOpen)
-                || (value == CLOSED && mNormallyOpen))
+        if ((value && !mNormallyOpen)
+                || (!value && mNormallyOpen))
             pinLevel = HIGH;
 
-        Log.notice("Switching valve %s \n", value == OPEN ? "open" : "closed");
+        //Log.notice("Switching valve %s \n", value ? "open" : "closed");
 
         controller.xioDigitalWrite(mPin, pinLevel);
     }
@@ -58,7 +58,7 @@ uint8_t Valve::getValue()
 Pump::Pump(int pin)
     : Thing()
     , mPin(pin)
-    , mValue(OFF)
+    , mValue(false)
 {
     pinMode(mPin, OUTPUT);
     digitalWrite(mPin, LOW);
@@ -71,9 +71,9 @@ void Pump::setValue(uint8_t value)
 {
     if (value != mValue) {
         mValue = value;
-        int pinLevel = (value == ON ? HIGH : LOW);
+        int pinLevel = (value ? HIGH : LOW);
 
-        Log.notice("Switching pump %s \n", value == ON ? "on" : "off");
+        //Log.notice("Switching pump %s \n", value ? "on" : "off");
 
         digitalWrite(mPin, pinLevel);
     }
@@ -197,12 +197,13 @@ uint8_t PressureController::getValue()
         }
 
         else if (b == 0) {
-            Log.error("Pressure regulator at address %d did not respond\n", mI2cAddress);
-            controller.sendErrorCode(PRESSURE_REGULATOR_NOT_RESPONDING);
+            //Log.error("Pressure regulator at address %d did not respond\n", mI2cAddress);
+            //controller.sendErrorCode(PRESSURE_REGULATOR_NOT_RESPONDING);
         }
 
-        else
-            Log.error("Pressure regulator returned %d bytes instead of the expected 2\n");
+        else {
+            //Log.error("Pressure regulator returned %d bytes instead of the expected 2\n");
+    }
 
         return mMeasuredValue;
     }

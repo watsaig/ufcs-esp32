@@ -18,7 +18,7 @@ Controller controller;
 #define LOG_LEVEL LOG_LEVEL_ERROR
 void setup()
 {
-    Serial.begin(38400);
+    Serial.begin(115200);
     delay(1000); // give peripherals time to start up
 
     controller.init();
@@ -28,7 +28,7 @@ void setup()
         // Sending long messages over bluetooth seems to be buggy; in the meantime, logging is enabled only for USB.
         //Log.begin(LOG_LEVEL, &SerialBT);
     #else
-        Log.begin(LOG_LEVEL, &Serial);
+        //Log.begin(LOG_LEVEL, &Serial);
     #endif
 
     #ifdef NEOPIXELS
