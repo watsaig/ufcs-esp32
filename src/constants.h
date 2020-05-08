@@ -87,7 +87,16 @@ enum Command : uint8_t {
     STATUS_REQUEST,
     UPTIME,
     ERROR,
+    LOG,
     NUM_COMMANDS
+};
+
+enum LogLevel : uint8_t {
+    LOG_DEBUG,
+    LOG_INFO,
+    LOG_WARNING,
+    LOG_ERROR,
+    LOG_FATAL
 };
 
 const uint8_t START_BYTE = 250;

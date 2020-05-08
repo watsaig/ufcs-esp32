@@ -1,4 +1,3 @@
-#include <ArduinoLog.h>
 
 #include "constants.h"
 #include "controller.h"
@@ -14,22 +13,16 @@ BluetoothSerial SerialBT;
 Controller controller;
 // ----------------------------------------
 
-// Log level should be "LOG_LEVEL_VERBOSE" for debugging, and "LOG_LEVEL_ERROR" for production code.
-#define LOG_LEVEL LOG_LEVEL_ERROR
 void setup()
 {
-    Serial.begin(115200);
-    delay(1000); // give peripherals time to start up
-
-    controller.init();
-
     #ifdef BLUETOOTH_SERIAL
         SerialBT.begin("Microfluidics control system");
-        // Sending long messages over bluetooth seems to be buggy; in the meantime, logging is enabled only for USB.
-        //Log.begin(LOG_LEVEL, &SerialBT);
     #else
-        //Log.begin(LOG_LEVEL, &Serial);
+        Serial.begin(115200);
     #endif
+
+    delay(1000); // give peripherals time to start up
+    controller.init();
 
     #ifdef NEOPIXELS
         controller.initNeoPixelStrip();

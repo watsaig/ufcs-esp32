@@ -5,7 +5,6 @@
 #include <list>
 #include <deque>
 #include <Wire.h>
-#include <ArduinoLog.h>
 
 #include "constants.h"
 #include "things.h"
@@ -40,6 +39,8 @@ public:
 
     void xioPinMode(int pin, int mode);
     void xioDigitalWrite(int pin, int value);
+
+    void log(LogLevel level, std::string message);
 
 private:
     // Serial communication 

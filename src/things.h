@@ -1,8 +1,7 @@
 #ifndef THINGS_H
 #define THINGS_H
 
-#include <ArduinoLog.h>
-
+#include <sstream>
 #include "constants.h"
 
 /** 

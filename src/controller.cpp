@@ -120,6 +120,7 @@ void Controller::update()
     }
 
     if ((millis() - mPressureControlTimer) > 500) {
+        //log(LOG_DEBUG, "Running pressure control code");
         pressureControl();
         mPressureControlTimer = millis();
     }
@@ -165,6 +166,25 @@ void Controller::xioDigitalWrite(int pin, int value)
 {
     mXioBoard.xioDigitalWriteCached(pin, value);
     mXIORefreshRequested = true;
+}
+
+/**
+ * @brief Send a plain-text log message to the host
+ * @param level The severity (LOG_DEBUG, LOG_WARNING,...)
+ * @param message The message to send
+ */
+void Controller::log(LogLevel level, std::string message)
+{
+    std::vector<uint8_t> b;
+    b.push_back(LOG);
+    b.push_back(1);
+    b.push_back(level);
+    b.push_back(message.size());
+
+    for (char const& c : message) 
+        b.push_back(c);
+
+    frameAndSendMessage(b);
 }
 
 /**
@@ -277,7 +297,9 @@ void Controller::parseDecodedBuffer(std::deque<uint8_t> const& buffer)
             break;
 
         default:
-            Log.error("Unknown command received: %d", command);
+            std::stringstream s;
+            s << "Unknown command received: " << command;
+            log(LOG_WARNING, s.str());
             break;
     }
 

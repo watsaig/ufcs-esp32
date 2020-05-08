@@ -43,8 +43,6 @@ void Valve::setValue(uint8_t value)
                 || (!value && mNormallyOpen))
             pinLevel = HIGH;
 
-        //Log.notice("Switching valve %s \n", value ? "open" : "closed");
-
         controller.xioDigitalWrite(mPin, pinLevel);
     }
 }
@@ -72,8 +70,6 @@ void Pump::setValue(uint8_t value)
     if (value != mValue) {
         mValue = value;
         int pinLevel = (value ? HIGH : LOW);
-
-        //Log.notice("Switching pump %s \n", value ? "on" : "off");
 
         digitalWrite(mPin, pinLevel);
     }
@@ -132,7 +128,6 @@ void PressureController::setValue(uint8_t value)
 
     if (mInterface == analog) {
         mSetPointValue = value;
-        Log.notice("Setting pressure to %d \n", value);
 
         /*
         int toWrite = value;
@@ -197,13 +192,16 @@ uint8_t PressureController::getValue()
         }
 
         else if (b == 0) {
-            //Log.error("Pressure regulator at address %d did not respond\n", mI2cAddress);
-            //controller.sendErrorCode(PRESSURE_REGULATOR_NOT_RESPONDING);
+            std::stringstream s;
+            s << "Pressure regulator at address " << mI2cAddress << " did not respond";
+            //controller.log(LOG_ERROR, s.str());
         }
 
-        else {
-            //Log.error("Pressure regulator returned %d bytes instead of the expected 2\n");
-    }
+        else  {
+            std::stringstream s;
+            s << "Pressure regulator at address " << mI2cAddress << " returned " << b << " bytes instead of 2";
+            controller.log(LOG_ERROR, s.str());
+        }
 
         return mMeasuredValue;
     }
