@@ -312,6 +312,10 @@ void Controller::parseDecodedBuffer(std::deque<uint8_t> const& buffer)
  */
 void Controller::sendComponentValue(Command componentType, uint8_t number)
 {
+    if (number == 0) {
+        log(LOG_WARNING, "sendComponentValue called with number = 0");
+    }
+
     std::vector<uint8_t> message;
     message.push_back(componentType);
 
@@ -421,7 +425,7 @@ void Controller::frameAndSendMessage(std::vector<uint8_t> const& message)
  */
 void Controller::setValve(uint8_t number, bool open)
 {
-    if (number <= mValves.size())  {
+    if (number > 0 && number <= mValves.size())  {
         mValves[number-1]->setValue(open);
         sendComponentValue(VALVE, number);
 
@@ -438,7 +442,7 @@ void Controller::setValve(uint8_t number, bool open)
  */
 void Controller::setPump(uint8_t number, bool on)
 {
-    if (number <= mPumps.size()) {
+    if (number > 0 && number <= mPumps.size()) {
         mPumps[number-1]->setValue(on);
         sendComponentValue(PUMP, number);
     }
@@ -451,7 +455,7 @@ void Controller::setPump(uint8_t number, bool on)
  */
 void Controller::setPressure(uint8_t number, uint8_t setpoint)
 {
-    if (number <= mPCs.size()) {
+    if (number > 0 && number <= mPCs.size()) {
         mPCs[number-1]->setValue(setpoint);
         sendComponentValue(PRESSURE, number);
     }
@@ -488,7 +492,7 @@ void Controller::pressureControl()
              millis() - mPumpLastSwitchOnTime > 3000)
     {
         pump->setValue(false);
-        sendComponentValue(PUMP, 0);
+        sendComponentValue(PUMP, 1);
     }
     
     else if (pump->getValue() == false &&
@@ -496,6 +500,6 @@ void Controller::pressureControl()
     {
         pump->setValue(true);
         mPumpLastSwitchOnTime = millis();
-        sendComponentValue(PUMP, 0);
+        sendComponentValue(PUMP, 1);
     }
 }
