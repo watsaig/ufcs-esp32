@@ -370,6 +370,8 @@ void Controller::sendAllComponentValues()
 
     for (int i(1); i <= mPCs.size(); ++i) 
         sendComponentValue(PRESSURE, i);
+
+    sendUptime();
 }
 
 /**
@@ -385,7 +387,7 @@ void Controller::sendUptime()
     value2 = (uptime & 0x0000FF00) >> 8;
     value3 = (uptime & 0x000000FF);
 
-    std::vector<uint8_t> message {value0, value1, value2, value3};
+    std::vector<uint8_t> message {UPTIME, 4, value0, value1, value2, value3};
     frameAndSendMessage(message);
 }
 
