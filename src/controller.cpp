@@ -220,12 +220,22 @@ std::deque<uint8_t> Controller::decodeBuffer()
                 mDecoderRecording = false;
             }
 
+            else if (mLastByteWasStart && c >= NUM_COMMANDS) {
+                // Invalid command, we stop right there
+                mDecoderRecording = false;
+                mLastByteWasStart = false;
+                break;
+            }
+
             else
                 mDecodedBuffer.push_back(c);
+
+            mLastByteWasStart = false;
         }
 
         else if (c == START_BYTE) {
             mDecoderRecording = true;
+            mLastByteWasStart = true;
         }
 
         decoderIndex++;

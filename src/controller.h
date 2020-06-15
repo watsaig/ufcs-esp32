@@ -56,6 +56,7 @@ private:
     std::deque<uint8_t> mDecodedBuffer;
     bool mDecoderRecording;
     bool mDecoderEscaped;
+    bool mLastByteWasStart;
 
     // Hardware components 
     void setValve(uint8_t number, bool open);
