@@ -40,7 +40,7 @@ public:
     void xioPinMode(int pin, int mode);
     void xioDigitalWrite(int pin, int value);
 
-    void log(LogLevel level, std::string message);
+    void log(LogLevel level, std::string const& message);
 
 private:
     // Serial communication 

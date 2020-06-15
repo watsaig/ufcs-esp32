@@ -173,7 +173,7 @@ void Controller::xioDigitalWrite(int pin, int value)
  * @param level The severity (LOG_DEBUG, LOG_WARNING,...)
  * @param message The message to send
  */
-void Controller::log(LogLevel level, std::string message)
+void Controller::log(LogLevel level, std::string const& message)
 {
     std::vector<uint8_t> b;
     b.push_back(LOG);
@@ -323,7 +323,8 @@ void Controller::parseDecodedBuffer(std::deque<uint8_t> const& buffer)
 void Controller::sendComponentValue(Command componentType, uint8_t number)
 {
     if (number == 0) {
-        log(LOG_WARNING, "sendComponentValue called with number = 0");
+        log(LOG_WARNING, "sendComponentValue called with number = 0. Ignoring.");
+        return;
     }
 
     std::vector<uint8_t> message;
@@ -360,7 +361,7 @@ void Controller::sendComponentValue(Command componentType, uint8_t number)
             break;
 
         default:
-            break;
+            return;
     }
 
     frameAndSendMessage(message);
