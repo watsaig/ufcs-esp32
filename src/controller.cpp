@@ -218,6 +218,7 @@ std::deque<uint8_t> Controller::decodeBuffer()
             else if (c == STOP_BYTE) {
                 foundCompleteMessage = true;
                 mDecoderRecording = false;
+                break;
             }
 
             else if (mLastByteWasStart && c >= NUM_COMMANDS) {
