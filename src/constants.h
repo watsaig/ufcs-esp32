@@ -9,7 +9,8 @@
 // Testing stuff
 // ---------------------------------------
 
-// if the following line is uncommented, the neopixel-related code in controller.[h/cpp] will be compiled (switching LEDs on/off when valves are toggled)
+// if the following line is uncommented, the neopixel-related code in controller.[h/cpp] will be compiled 
+// (switching LEDs on/off when valves are toggled)
 //#define NEOPIXELS
 #define NEOPIXELS_DATA_PIN 14
 
@@ -24,9 +25,6 @@
 
 #define DAC0 25
 #define DAC1 26
-
-#define PR1_I2C_ADDRESS 43
-#define PR2_I2C_ADDRESS 44
 
 #define PR1_SETPOINT_PIN DAC0
 #define PR2_SETPOINT_PIN DAC1
@@ -82,73 +80,28 @@
 
 // Constants for serial communication -- don't edit (or also edit them on the PC side)
 // ---------------------------------------
-
-#define START_BYTE 249
-#define END_BYTE 250
-
-enum ComponentID : uint8_t {
-    VALVE1 = 0,
-    VALVE2,
-    VALVE3,
-    VALVE4,
-    VALVE5,
-    VALVE6,
-    VALVE7,
-    VALVE8,
-    VALVE9,
-    VALVE10,
-    VALVE11,
-    VALVE12,
-    VALVE13,
-    VALVE14,
-    VALVE15,
-    VALVE16,
-    VALVE17,
-    VALVE18,
-    VALVE19,
-    VALVE20,
-    VALVE21,
-    VALVE22,
-    VALVE23,
-    VALVE24,
-    VALVE25,
-    VALVE26,
-    VALVE27,
-    VALVE28,
-    VALVE29,
-    VALVE30,
-    VALVE31,
-    VALVE32,
-    PR1,
-    PR2,
-    PR3,
-    PUMP1, // 35
-    PUMP2,
-    ALL_COMPONENTS // leave this as the last element, to allow iterating over the enum
+enum Command : uint8_t {
+    VALVE,
+    PRESSURE,
+    PUMP,
+    STATUS_REQUEST,
+    UPTIME,
+    ERROR,
+    LOG,
+    NUM_COMMANDS
 };
 
-enum ValveStates : uint8_t {
-    OPEN = ALL_COMPONENTS+1, // 38
-    CLOSED
+enum LogLevel : uint8_t {
+    LOG_DEBUG,
+    LOG_INFO,
+    LOG_WARNING,
+    LOG_ERROR,
+    LOG_FATAL
 };
 
-enum PumpStates : uint8_t {
-    ON = CLOSED+1, //40
-    OFF
-};
+const uint8_t START_BYTE = 250;
+const uint8_t STOP_BYTE = 251;
+const uint8_t ESCAPE_BYTE = 252;
 
-enum SerialRequests : uint8_t {
-    STATUS_REQUEST = OFF+1, // request status of a certain component (or all)
-    UPTIME
-};
-
-enum Errors : uint8_t {
-    ERROR = UPTIME+1,
-    NO_ERROR,
-    UNKNOWN,
-    PRESSURE_REGULATOR_NOT_RESPONDING
-};
-
-// ---------------------------------------
 
 #endif

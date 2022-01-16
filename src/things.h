@@ -1,8 +1,7 @@
 #ifndef THINGS_H
 #define THINGS_H
 
-#include <ArduinoLog.h>
-
+#include <sstream>
 #include "constants.h"
 
 /** 
@@ -42,7 +41,7 @@ public:
 protected:
     int mPin;
     bool mNormallyOpen;
-    uint8_t mValue; // CLOSED or OPEN
+    bool mValue; // true for open, false for closed
 };
 
 class Pump : public Thing
@@ -56,7 +55,7 @@ public:
 
 protected:
     int mPin;
-    uint8_t mValue; // ON or OFF
+    bool mValue; // true for on, false for off 
 };
 
 class PressureController : public Thing

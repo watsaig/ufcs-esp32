@@ -1,9 +1,10 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include <Map>
+#include <map>
+#include <list>
+#include <deque>
 #include <Wire.h>
-#include <ArduinoLog.h>
 
 #include "constants.h"
 #include "things.h"
@@ -16,8 +17,8 @@
 /**
   * The controller class handles all high-level functionality as well as
   * serial communication.
-  * Its constructor can be seen as a replacement for the Arduino setup() function,
-  * and its update() function as a replacement for the Arduino loop() function.
+  * Its constructor can be seen as the equivalent of the Arduino setup() function,
+  * and its update() function as the equivalent of the Arduino loop() function.
   *
   * For simplicity and ease of maintenance, the various components (valves, pumps and
   * pressure regulators) are represented by different classes that all inherit from
@@ -39,28 +40,44 @@ public:
     void xioPinMode(int pin, int mode);
     void xioDigitalWrite(int pin, int value);
 
-    void sendErrorCode(Errors code);
+    void log(LogLevel level, std::string const& message);
 
 private:
-    void handleSerialData();
-    void sendComponentValue(ComponentID component);
+    // Serial communication 
+    std::deque<uint8_t> decodeBuffer();
+    void parseDecodedBuffer(std::deque<uint8_t> const& buffer);
+
+    void sendComponentValue(Command componentType, uint8_t number);
     void sendAllComponentValues();
     void sendUptime();
+    void frameAndSendMessage(std::vector<uint8_t> const& message);
 
+    std::deque<uint8_t> mBuffer;
+    std::deque<uint8_t> mDecodedBuffer;
+    bool mDecoderRecording;
+    bool mDecoderEscaped;
+    bool mLastByteWasStart;
+
+    // Hardware components 
+    void setValve(uint8_t number, bool open);
+    void setPump(uint8_t number, bool on);
+    void setPressure(uint8_t number, uint8_t setpoint);
     void pressureControl();
-
-    unsigned long mTimer;
-    unsigned long mPressureControlTimer;
-    unsigned long mPumpLastSwitchOnTime;
 
     XIO mXioBoard;
     bool mXIORefreshRequested;
 
-    std::map<ComponentID, Thing*> mComponents;
+    std::deque<Valve*> mValves;
+    std::deque<Pump*> mPumps;
+    std::deque<PressureController*> mPCs;
+
+    // Timers
+    unsigned long mPressureUpdateTimer;
+    unsigned long mPressureControlTimer;
+    unsigned long mPumpLastSwitchOnTime;
 
 
 #ifdef NEOPIXELS
-
 public:
     void initNeoPixelStrip();
     void setNeoPixel(int index, const RgbColor& color);
